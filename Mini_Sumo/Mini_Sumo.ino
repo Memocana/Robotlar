@@ -4,12 +4,12 @@ int lastSensor = 0;
 void setup() {
   // initialize serial communication at 9600 bits per second:
   Serial.begin(9600);
-  motor1A=A3;
-  motor1B=4;
-  motor1E=9;
-  motor2A=12;
-  motor2B=7;
-  motor2E=3;
+  motor1A=12;
+  motor1B=13;
+  motor1E=D3;
+  motor2A=10;
+  motor2B=11;
+  motor2E=D9;
   sensorF=A4;
   sensorR=A1;
   sensorL=A2;
@@ -114,7 +114,7 @@ void rightReverse(int leftMotor, int rightMotor){
 
 // the loop routine runs over and over again forever:
 void loop() {
-  if (digitalRead(qtrL)) {
+  /*if (digitalRead(qtrL)) {
     backward(-255,255);
     delay(100);
     rightReverse(255,-255);
@@ -138,8 +138,11 @@ void loop() {
     leftReverse(-255,255);
   } else if (lastSensor == 2) {
     rightReverse(255,-255);
-  }
-  delay(5);
+  }*/
+  forward(100,100);
+  delay(100);
+  stopper();
+  delay(100);
 }
 
 
