@@ -1,25 +1,25 @@
-int motor1A,motor1B, motor2A, motor2B, motor1E, motor2E, led1,led2, sensorF, sensorR, sensorL, qtrR, qtrL, butt1, butt2, butt3;
+int motor1A,motor1B, motor2A, motor2B, motor1E, motor2E, led1, led2, sensorF, sensorR, sensorL, qtrR, qtrL, pot1, pot2, pot3;
 int lastSensor = 0;
 
 void setup() {
   // initialize serial communication at 9600 bits per second:
   Serial.begin(9600);
-  motor1A=12;
-  motor1B=13;
-  motor1E=D3;
-  motor2A=10;
-  motor2B=11;
-  motor2E=D9;
-  sensorF=A4;
-  sensorR=A1;
-  sensorL=A2;
-  qtrR=A3;
-  qtrL=0;
-  butt1=8;
-  butt2=9;
-  butt3=A0;
-  led1=11;
-  led2=10;
+  motor1A=A3;
+  motor1B=4;
+  motor1E=9;
+  motor2A=12;
+  motor2B=7;
+  motor2E=3;
+  sensorF=A2;
+  sensorR=8;
+  sensorL=13;
+  qtrR=A1;
+  qtrL=A0;
+  pot1=8;
+  pot2=9;
+  pot3=A0;
+  led1=0;
+  led2=1;
   pinMode(motor1A, OUTPUT);
   pinMode(motor1B, OUTPUT);
   pinMode(motor1E, OUTPUT);
@@ -33,9 +33,9 @@ void setup() {
   pinMode(sensorL, INPUT);
   pinMode(qtrL, INPUT);
   pinMode(qtrR, INPUT);
-  pinMode(butt1, INPUT);
-  pinMode(butt2, INPUT);
-  pinMode(butt3, INPUT);
+  pinMode(pot1, INPUT);
+  pinMode(pot2, INPUT);
+  pinMode(pot3, INPUT);
 }
 
 int program(){
