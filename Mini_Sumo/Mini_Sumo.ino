@@ -1,16 +1,16 @@
 int  motor1A=A0;
 int  motor1B=A1;
-int  motor1E=5;
+int  motor1E=3;
 int  motor2A=9;
 int  motor2B=10;
 int  motor2E=11;
-int  sensorF=8;
-int  sensorR=7;
-int  sensorL=6;
-int  button1=A2;
+int  sensorF=6;
+int  sensorR=8;
+int  sensorL=A5;
 int  led1=0;
 int  led2=1;
-int  lastSensor = 0;
+int  startModule = 2;
+int  lastSeen = 0;
 
 void setup() {
   // initialize serial communication at 9600 bits per second:
@@ -26,7 +26,6 @@ void setup() {
   pinMode(sensorF, INPUT);
   pinMode(sensorR, INPUT_PULLUP);
   pinMode(sensorL, INPUT_PULLUP);
-  pinMode(button1, INPUT_PULLUP);
   digitalWrite(led1, HIGH);
   digitalWrite(led2, HIGH);  
   delay(1000);
@@ -38,10 +37,12 @@ void movement(int leftMotor, int rightMotor) {
   if (leftMotor < 0) {
     digitalWrite(motor1A,LOW);
     digitalWrite(motor1B,HIGH);
-  } else if (leftMotor == 0) {
+  } 
+  else if (leftMotor == 0) {
     digitalWrite(motor1A,LOW);
     digitalWrite(motor1B,LOW);
-  } else {
+  } 
+  else {
     digitalWrite(motor1A,HIGH);
     digitalWrite(motor1B,LOW);
   }
@@ -49,10 +50,12 @@ void movement(int leftMotor, int rightMotor) {
   if (rightMotor < 0) {
     digitalWrite(motor2A,LOW);
     digitalWrite(motor2B,HIGH);
-  } else if (rightMotor == 0) {
+  } 
+  else if (rightMotor == 0) {
     digitalWrite(motor2A,LOW);
     digitalWrite(motor2B,LOW);
-  } else {
+  } 
+  else {
     digitalWrite(motor2A,HIGH);
     digitalWrite(motor2B,LOW);
   }
@@ -70,7 +73,7 @@ void forward(int leftMotor, int rightMotor){
   movement(leftMotor,rightMotor);
 }
 void backward(int leftMotor, int rightMotor){
-  movement(-leftMotor, -rightMotor);
+  movement(0-leftMotor, 0-rightMotor);
 }
 void leftOneWheel(int leftMotor){
   movement(leftMotor,0);
@@ -80,6 +83,7 @@ void rightOneWheel(int rightMotor){
 }
 void leftReverse(int leftMotor, int rightMotor){
   movement(-leftMotor, rightMotor);
+
 }
 void rightReverse(int leftMotor, int rightMotor){
   movement(leftMotor, -rightMotor);
@@ -87,24 +91,29 @@ void rightReverse(int leftMotor, int rightMotor){
 
 // the loop routine runs over and over again forever:
 void loop() {
-  if(!digitalRead(sensorR)) {
-    forward(100, 100);
-    delay(10);
-  } else if(!digitalRead(sensorL)) {
-    leftOneWheel(100);
-    delay(10);
-  }  else {
-    stopper();
-    delay(10);
-  }
- /*
-  if(digitalRead(sensorF)) {
-    forward(100,100);
-    delay(10);
-  } else if(!digitalRead(sensorL)) {
-    leftOneWheel(100);
-    delay(10);
-  }*/
+    if (digitalRead(sensorF)) {
+      forward(230, 230);
+      lastSeen = 0;
+      delay(2);
+    } 
+    else if (!digitalRead(sensorR)) {
+      rightReverse(100,100);
+      lastSeen = 2;
+      delay(2);
+    } 
+    else if (!digitalRead(sensorL)) {
+      leftReverse(100,100);
+      lastSeen = 1;
+      delay(2);
+    } else if (lastSeen == 1) {
+      leftOneWheel(100);
+      delay(2);
+    } else {
+      stopper(0);
+      delay(2);
+    }
+   
 }
+
 
 
