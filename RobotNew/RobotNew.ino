@@ -1,12 +1,14 @@
-int motor1A = 9;
-int motor1E = 11;
-int motor1B = 10;
+int motor1A = 12;
+int motor1B = 11;
+int motor1E = 10;
+
 int motor2A = A0;
-int motor2E = 5;
 int motor2B = A1;
+int motor2E = 9;
+
 int led1=0;
 int led2=1;
-int button=8;
+int button=7;
 int getRect = 0;
 
 void setup() {
@@ -18,21 +20,27 @@ void setup() {
   pinMode(motor2E, OUTPUT);
   pinMode(led1, OUTPUT);
   pinMode(led2, OUTPUT);
-  pinMode(button, INPUT_PULLUP);
+  pinMode(button, INPUT);
+  digitalWrite(led1, LOW);
+  delay(100);
 }
 
 void loop() {
-  while(digitalRead(button)) {
-    delay(10);
-  }  
-  if (getRect == 0) {
-    getRect = 1;
-    delay(1000);
-  }
-  forward(75, 75);
-  delay(300);
-  stopper();
-  delay(100);
+  digitalWrite(motor1A,HIGH);
+  digitalWrite(motor1B,LOW);
+  digitalWrite(motor2A,HIGH);
+  digitalWrite(motor2B,LOW);
+  analogWrite(motor1E, 100);
+  analogWrite(motor2E, 100);
+  delay(500);
+  digitalWrite(motor1A,LOW);
+  digitalWrite(motor1B,LOW);
+  digitalWrite(motor2A,LOW);
+  digitalWrite(motor2B,LOW);
+  analogWrite(motor1E, 0);
+  analogWrite(motor2E, 0);
+  digitalWrite(led1, HIGH);
+  delay(500);
 }
 
 //Movement methods
@@ -77,7 +85,7 @@ void forward(int leftMotor, int rightMotor){
   movement(leftMotor,rightMotor);
 }
 void backward(int leftMotor, int rightMotor){
-  movement(leftMotor,rightMotor);
+  movement(-1*leftMotor,-1*rightMotor);
 }
 void leftOneWheel(int leftMotor, int rightMotor){
   movement(leftMotor,rightMotor);
@@ -86,9 +94,9 @@ void rightOneWheel(int leftMotor, int rightMotor){
   movement(leftMotor,rightMotor);
 }
 void leftReverse(int leftMotor, int rightMotor){
-  movement(leftMotor,rightMotor);
+  movement(-1*leftMotor,rightMotor);
 }
 void rightReverse(int leftMotor, int rightMotor){
-  movement(leftMotor,rightMotor);
+  movement(leftMotor,-1*rightMotor);
 }
 
