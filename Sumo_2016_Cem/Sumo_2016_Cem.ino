@@ -1,26 +1,29 @@
-int motorRA = A5; //Burayı güncelle baba
-int motorRB = A4;
-int motorRE = 5;
-int motorLA = A3;
-int motorLB = A2;
-int motorLE = 6;
-int sensorF = 9;
-int sensorR = 8;
-int sensorL = 7;
+int motorRA = 10; //Burayı güncelle baba
+int motorRB = 12;
+int motorRE = 11;
+int motorLA = A1;
+int motorLB = A0;
+int motorLE = 9;
+int sensorF = A4;
+int sensorR = A5;
+int sensorL = A3;
 int qtrL = 3;
-int qtrR = 4;
-int button = 12;
-int dip1 = 11;
-int dip2 = 10;
+int qtrR = 2;
+
 int led1 = 0;//yeşil - sağ
 int led2 = 1;//turuncu - sol
-int led3 = 2;
-int getRect = 0;
+
+int button1 = 4;
+int button2 = 7;
+
+int getRect = false;
+int wait = true
+
 int lastTurn = 0;
 int mode = 4;
 int turns = 0;
 
-int power = 150; //sadece dönüşler için bu, Mr. Muscle Def. 150, Tesla Def, 100
+int power = 100; //sadece dönüşler için bu, Mr. Muscle Def. 60, Tesla Def, 100
 
 void setup() {
   //Burayı sen doldur baba ;)
@@ -37,9 +40,8 @@ void setup() {
   pinMode(sensorL, INPUT);
   pinMode(qtrR, INPUT);
   pinMode(qtrL, INPUT);
-  pinMode(dip1, INPUT_PULLUP);
-  pinMode(dip2, INPUT_PULLUP);
-  pinMode(button, INPUT);
+  pinMode(button1, INPUT);
+
   digitalWrite(led1, HIGH);
   digitalWrite(led2, HIGH);
   delay(2000);
@@ -47,20 +49,15 @@ void setup() {
   digitalWrite(led2, LOW);
 }
 
-void loop() {
-  /* while (getRect == 0 && digitalRead(button) == LOW) { //button basılı değilse
-   delay(1);
-   }
-   */
-  //getRect = 1;
+void loop() {   
 
   //move test
   /*
-    forward(150);
+    forward(100);
    delay(1000);
    forward(0);
    delay(500);
-   backward(150);
+   backward(100);
    delay(1000);
    forward(0);
    delay(500);
@@ -68,20 +65,20 @@ void loop() {
 
   //Sensor Testi
   /*
-    if (digitalRead(sensorF)) {
+  if (digitalRead(qtrR)) {
    digitalWrite(led1 ,HIGH);
    } else {
    digitalWrite(led1 ,LOW);
    }
-   if (digitalRead(sensorL)) {
+   if (digitalRead(qtrL)) {
    digitalWrite(led2 ,HIGH);
    } else {
    digitalWrite(led2 ,LOW);
    }
    */
-  //Savaşma modu
-
-  /*if (digitalRead(dip1) && digitalRead(dip2)) {
+  /*
+  //Dip Taktik seçimi
+   if (digitalRead(dip1) && digitalRead(dip2)) {
    mode = 1;
    } 
    else if (digitalRead(dip1)) {
@@ -117,74 +114,102 @@ void loop() {
    break;
    }*/
 
+  //Savaşma modu
 
-  if (!digitalRead(sensorF)) {
-    forward(255);
-    lastTurn *= 2;
-    if (!digitalRead(qtrR) || !digitalRead(qtrL)) {
-      backward(255);
+  if (digitalRead(button1) == LOW) {
+    getRect = !getRect;
+  }
+
+  if (getRect) {
+    if (wait) {
+      delay(1000);
+      wait = false;
+    }
+    getRect = true;
+    if (!digitalRead(sensorF)) {
+      forward(255);
+      lastTurn *= 2;
+      if (!digitalRead(qtrR) || !digitalRead(qtrL)) {
+        backward(255);
+        delay(power*2);
+        forward(0);
+        lastTurn = 0;
+        digitalWrite(led1, LOW);
+        digitalWrite(led2, LOW);
+        delay(1000);
+        digitalWrite(led1, HIGH);
+        digitalWrite(led2, HIGH);
+        delay(1000);
+        //right(40);
+      } 
+    } 
+    else if (!digitalRead(sensorR)) {
+      right(power);
+      lastTurn = 1;
+    } 
+    else if (!digitalRead(sensorL)) {
+      left(power);
+      lastTurn = -1;
+    } 
+    else if (!digitalRead(qtrR) && !digitalRead(qtrL)) {
+      backward(250);
       delay(power*2);
-      forward(0);
       lastTurn = 0;
-      digitalWrite(led1, LOW);
-      digitalWrite(led2, LOW);
-      delay(1000);
-      digitalWrite(led1, HIGH);
-      digitalWrite(led2, HIGH);
-      delay(1000);
       //right(40);
     } 
-  } 
-  else if (!digitalRead(sensorR)) {
-    right(power);
-    lastTurn = 1;
-  } 
-  else if (!digitalRead(sensorL)) {
-    left(power);
-    lastTurn = -1;
-  } 
-  else if (!digitalRead(qtrR) && !digitalRead(qtrL)) {
-    backward(250);
-    delay(power*2);
-    lastTurn = 0;
-    //right(40);
-  } 
-  else if (!digitalRead(qtrR)) {
-    backward(250);
-    delay(power*2);
-    lastTurn = 0;
-    digitalWrite(led1, HIGH);
-    digitalWrite(led2, LOW);
+    else if (!digitalRead(qtrR)) {
+      backward(250);
+      delay(power*2);
+      lastTurn = 0;
+      digitalWrite(led1, HIGH);
+      digitalWrite(led2, LOW);
 
-    //right(40);
-  } 
-  else if (!digitalRead(qtrL)) {
-    backward(250);
-    delay(power*2);
-    lastTurn = 0;
-    digitalWrite(led1, LOW);
-    digitalWrite(led2, HIGH);
-    //left(40);
-  } 
-  else if (lastTurn == -2) {
-    right(power);
-  } 
-  else if (lastTurn == 2) {
-    left(power);
-  } 
-  else if (lastTurn == -1) {
-    left(power);
-    lastTurn = -1;
-  } 
-  else if (lastTurn == 1) {
-    right(power);
-    lastTurn = 1;
+      //right(40);
+    } 
+    else if (!digitalRead(qtrL)) {
+      backward(250);
+      delay(power*2);
+      lastTurn = 0;
+      digitalWrite(led1, LOW);
+      digitalWrite(led2, HIGH);
+      //left(40);
+    } 
+    else if (lastTurn == -2) {
+      right(power-20);
+    } 
+    else if (lastTurn == 2) {
+      left(power-20);
+    } 
+    else if (lastTurn == -1) {
+      left(power);
+      lastTurn = -1;
+    } 
+    else if (lastTurn == 1) {
+      right(power);
+      lastTurn = 1;
+    } 
+    else {
+      right(power);
+      turns++;
+      if (turns % 20 == 0) {
+       forward(power);
+       }*/
+    }
   } 
   else {
-    right(120);
-    turns++;
-    if (turns % 10 == 9) {
-      forward(60);
+    getRect = false;
+    wait = true;
+    if (digitalRead(qtrR)) {
+      digitalWrite(led1 ,HIGH);
+    } 
+    else {
+      digitalWrite(led1 ,LOW);
+    }
+    if (digitalRead(qtrL)) {
+      digitalWrite(led2 ,HIGH);
+    } 
+    else {
+      digitalWrite(led2 ,LOW);
     }
   }
   delay(8);
@@ -244,6 +269,9 @@ void slowleft(int powa) {
   analogWrite(motorRE, 0);
   analogWrite(motorLE, powa);
 }
+
+
+
 
 
 
